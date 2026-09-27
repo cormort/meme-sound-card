@@ -16,7 +16,7 @@
     --bg:#141414; --panel:#2b2b2b; --panel2:#222; --line:#3a3a3a; --ink:#f5f5f5; --muted:#9a9a9a; --gold:#f1c40f;
     --gambler:#2980b9; --gambler-d:#1a5276; --meme:#8e44ad; --meme-d:#5b2c6f;
     --jianmo:#c0392b; --jianmo-d:#7b241c; --usagi:#f1c40f; --usagi-d:#9b810d;
-    --classic:#27ae60; --classic-d:#186a3b; --mine:#7f8c8d; --mine-d:#566573;
+    --classic:#27ae60; --classic-d:#186a3b; --talk:#e67e22; --talk-d:#a04000; --mine:#7f8c8d; --mine-d:#566573;
   }
   *{box-sizing:border-box}
   body{
@@ -45,6 +45,7 @@
   .chips .chip[data-cat="小明劍魔"].on{background:var(--jianmo-d); color:#fadbd8}
   .chips .chip[data-cat="烏薩奇"].on{background:var(--usagi-d); color:#fef9e7}
   .chips .chip[data-cat="經典迷因"].on{background:var(--classic-d); color:#d5f5e3}
+  .chips .chip[data-cat="搞笑對白"].on{background:var(--talk-d); color:#fdebd0}
   .chips .chip[data-cat="我的音效"].on{background:var(--mine-d); color:#eaecee}
   .vol{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px}
   .vol input{width:90px}
@@ -71,6 +72,7 @@
   .key[data-cat="小明劍魔"]{background:var(--jianmo); box-shadow:0 6px 0 var(--jianmo-d)}
   .key[data-cat="烏薩奇"]{background:var(--usagi); color:#3d3200; text-shadow:none; box-shadow:0 6px 0 var(--usagi-d)}
   .key[data-cat="經典迷因"]{background:var(--classic); box-shadow:0 6px 0 var(--classic-d)}
+  .key[data-cat="搞笑對白"]{background:var(--talk); box-shadow:0 6px 0 var(--talk-d)}
   .key[data-cat="我的音效"]{background:var(--mine); box-shadow:0 6px 0 var(--mine-d)}
   .key:active{box-shadow:0 2px 0 rgba(0,0,0,.5)}
   .key.playing{filter:brightness(1.25); box-shadow:0 0 0 3px var(--gold), 0 6px 0 rgba(0,0,0,.4)}
@@ -124,7 +126,7 @@
 <div class="foot">
   聲明：本網頁程式碼與「賭神／網路迷因／小明劍魔／烏薩奇」音效素材來源為
   <a href="https://memes.tw/sound" target="_blank" rel="noopener">memes.tw</a>，
-  「經典迷因」音效取自 <a href="https://archive.org" target="_blank" rel="noopener">Internet Archive</a>，
+  「經典迷因」「搞笑對白」音效取自 <a href="https://archive.org/details/memesounds" target="_blank" rel="noopener">Internet Archive：various meme sound effects</a>（CC BY-NC-SA 4.0），
   僅供程式教學、技術交流與個人娛樂使用，請勿用於商業營利用途。<br>
   自己加的音效只存在你自己的瀏覽器裡（IndexedDB），不會上傳。
 </div>
@@ -153,6 +155,7 @@
    { id, cat, name, url, start?, end? }  start/end 是「只播這一段」（秒）
    ========================================================================= */
 const CDN = 'https://memeprod.sgp1.digitaloceanspaces.com/user-sound/';
+const AI = 'https://archive.org/download/memesounds/';
 const SOUNDS = [
   // 法國賭神
   { id:'g1', cat:'賭神', name:'我要驗牌',        url:CDN+'c8a897ea134ef5a0ad3667b31b9833ae.mp3' },
@@ -180,8 +183,39 @@ const SOUNDS = [
   { id:'c3', cat:'經典迷因', name:'Among Us<br>身分揭露', url:'https://archive.org/download/among-us-role-reveal-sound/among-us-role-reveal-sound.mp3' },
   { id:'c4', cat:'經典迷因', name:'bruh',        url:'https://archive.org/download/movie_1_202401/movie_1.mp3' },
   { id:'c5', cat:'經典迷因', name:'放屁聲',      url:'https://archive.org/download/fart-with-reverb/dry-fart.mp3' },
+  // 經典迷因／搞笑對白（Internet Archive「various meme sound effects」，CC BY-NC-SA 4.0）
+  { id:'a1', cat:'經典迷因', name:'808 重低音', url:AI+'808-boom.mp3' },
+  { id:'a2', cat:'經典迷因', name:'金屬管掉落', url:AI+'metal-pipe-fall-meme.mp3' },
+  { id:'a3', cat:'經典迷因', name:'Windows 錯誤', url:AI+'windows-error-sound_9PcNR0C.mp3' },
+  { id:'a4', cat:'經典迷因', name:'Minecraft 洞窟', url:AI+'minecraft-cave-sound-13.mp3' },
+  { id:'a5', cat:'經典迷因', name:'Metal Gear 警報', url:AI+'metal-gear-alert-sound-effect_XKoHReZ.mp3' },
+  { id:'a6', cat:'經典迷因', name:'Roblox 死亡音', url:AI+'roblox-death-sound_1_7QU3n8P.mp3' },
+  { id:'a7', cat:'經典迷因', name:'薩爾達鈴聲', url:AI+'zelda-bell-sound-effect.mp3' },
+  { id:'a8', cat:'經典迷因', name:'鴨叫', url:AI+'quack-meme.mp3' },
+  { id:'a9', cat:'經典迷因', name:'河豚', url:AI+'pufferfish.mp3' },
+  { id:'a10', cat:'經典迷因', name:'Hehehe Haw', url:AI+'hehehehaww.mp3' },
+  { id:'a11', cat:'經典迷因', name:'Skibidi', url:AI+'skibidi-toilet-hehehe.mp3' },
+  { id:'a12', cat:'經典迷因', name:'Yippee', url:AI+'yippee-meme-sound-effect.mp3' },
+  { id:'a13', cat:'經典迷因', name:'Bonk', url:AI+'bonkmeme.mp3' },
+  { id:'a14', cat:'經典迷因', name:'腦袋當機', url:AI+'brain-fart-meme.mp3' },
+  { id:'a15', cat:'搞笑對白', name:'啊靠，又來了', url:AI+'ah-shit-here-we-go-again_jyHLMOg.mp3' },
+  { id:'a16', cat:'搞笑對白', name:'一直都是這樣', url:AI+'always-has-been_UPHCf0U.mp3' },
+  { id:'a17', cat:'搞笑對白', name:'你確定嗎？', url:AI+'areyousureaboutthat.mp3' },
+  { id:'a18', cat:'搞笑對白', name:'Bababooey', url:AI+'bababooey-sound-effect_srvnhns.mp3' },
+  { id:'a19', cat:'搞笑對白', name:'Bruh（原版）', url:AI+'bruh-sound-effect_WstdzdM.mp3' },
+  { id:'a20', cat:'搞笑對白', name:'Chipi Chapa', url:AI+'chipi-chapa-meme.mp3' },
+  { id:'a21', cat:'搞笑對白', name:'Deja Vu', url:AI+'dejavu-online-audio-converter_fo90UMK.mp3' },
+  { id:'a22', cat:'搞笑對白', name:'情感傷害', url:AI+'emotional-damage-meme.mp3' },
+  { id:'a23', cat:'搞笑對白', name:'Hello Moto', url:AI+'hello-moto-sound-notification.mp3' },
+  { id:'a24', cat:'搞笑對白', name:'Noot Noot', url:AI+'noot-noot-meme.mp3' },
+  { id:'a25', cat:'搞笑對白', name:'Oh Ma Gaud', url:AI+'oh-ma-gaud-vine.mp3' },
+  { id:'a26', cat:'搞笑對白', name:'史酷比笑聲', url:AI+'scooby-doo-laugh-meme.mp3' },
+  { id:'a27', cat:'搞笑對白', name:'Yeah Boy', url:AI+'yeah-boy-meme.mp3' },
+  { id:'a28', cat:'搞笑對白', name:'為什麼有 Boss 音樂', url:AI+'why-do-i-hear-boss-music.mp3' },
+  { id:'a29', cat:'搞笑對白', name:'戰鬥力超過 9000', url:AI+'over9000_HAHpDj8.mp3' },
+  { id:'a30', cat:'搞笑對白', name:'狗在幹嘛', url:AI+'what-da-dog-doin.mp3' },
 ];
-const CATS = ['全部','賭神','網路迷因','小明劍魔','烏薩奇','經典迷因','我的音效'];
+const CATS = ['全部','賭神','網路迷因','小明劍魔','烏薩奇','經典迷因','搞笑對白','我的音效'];
 const KEYORDER = '1234567890qwertyuiopasdfghjklzxcvbnm'.split('');
 const LS = { fav:'msc.fav', vol:'msc.vol', mix:'msc.mix', mine:'msc.mine' };
 
