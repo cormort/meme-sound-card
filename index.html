@@ -126,7 +126,8 @@
 <div class="foot">
   聲明：本網頁程式碼與「賭神／網路迷因／小明劍魔／烏薩奇」音效素材來源為
   <a href="https://memes.tw/sound" target="_blank" rel="noopener">memes.tw</a>，
-  「經典迷因」「搞笑對白」音效取自 <a href="https://archive.org/details/memesounds" target="_blank" rel="noopener">Internet Archive：various meme sound effects</a>（CC BY-NC-SA 4.0），
+  「經典迷因」「搞笑對白」音效取自 <a href="https://archive.org/details/memesounds" target="_blank" rel="noopener">Internet Archive：various meme sound effects</a>（CC BY-NC-SA 4.0）與
+  <a href="https://www.myinstants.com" target="_blank" rel="noopener">MyInstants</a>，
   僅供程式教學、技術交流與個人娛樂使用，請勿用於商業營利用途。<br>
   自己加的音效只存在你自己的瀏覽器裡（IndexedDB），不會上傳。
 </div>
@@ -156,6 +157,7 @@
    ========================================================================= */
 const CDN = 'https://memeprod.sgp1.digitaloceanspaces.com/user-sound/';
 const AI = 'https://archive.org/download/memesounds/';
+const MI = 'https://www.myinstants.com/media/sounds/';
 const SOUNDS = [
   // 法國賭神
   { id:'g1', cat:'賭神', name:'我要驗牌',        url:CDN+'c8a897ea134ef5a0ad3667b31b9833ae.mp3' },
@@ -214,6 +216,11 @@ const SOUNDS = [
   { id:'a28', cat:'搞笑對白', name:'為什麼有 Boss 音樂', url:AI+'why-do-i-hear-boss-music.mp3' },
   { id:'a29', cat:'搞笑對白', name:'戰鬥力超過 9000', url:AI+'over9000_HAHpDj8.mp3' },
   { id:'a30', cat:'搞笑對白', name:'狗在幹嘛', url:AI+'what-da-dog-doin.mp3' },
+  // 問號／Huh 系列（黑人問號是圖片梗，常配的就是這種「Huh?」；MyInstants）
+  { id:'q1', cat:'搞笑對白', name:'黑人問號<br>Huh?', url:MI+'huh_37bAoRo.mp3' },
+  { id:'q2', cat:'搞笑對白', name:'傻眼貓咪',   url:MI+'confused-cross-eyed-kitten-meme.mp3' },
+  { id:'q3', cat:'搞笑對白', name:'Huh?（Ceeday）', url:MI+'ceeday-huh-sound-effect.mp3' },
+  { id:'q4', cat:'搞笑對白', name:'Huh Cat',    url:AI+'huh-cat-meme_xyAszPZ.mp3' },
 ];
 const CATS = ['全部','賭神','網路迷因','小明劍魔','烏薩奇','經典迷因','搞笑對白','我的音效'];
 const KEYORDER = '1234567890qwertyuiopasdfghjklzxcvbnm'.split('');
