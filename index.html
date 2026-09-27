@@ -1,123 +1,99 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>終極迷因音效控制板 v3.1 (RWD 響應式)</title>
-    
-    <link rel="preconnect" href="https://memeprod.sgp1.digitaloceanspaces.com">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>終極迷因音效控制板 v4.0</title>
+<meta name="description" content="線上迷因音效控制板：賭神、小明劍魔、烏薩奇等 20+ 顆音效，點一下就播；可搜尋、加最愛、用鍵盤打、自己加音效，還能加到手機主畫面離線使用。">
+<meta name="theme-color" content="#1a1a1a">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://memeprod.sgp1.digitaloceanspaces.com">
+<link rel="preconnect" href="https://archive.org">
+<style>
+  :root{
+    --bg:#141414; --panel:#2b2b2b; --panel2:#222; --line:#3a3a3a; --ink:#f5f5f5; --muted:#9a9a9a; --gold:#f1c40f;
+    --gambler:#2980b9; --gambler-d:#1a5276; --meme:#8e44ad; --meme-d:#5b2c6f;
+    --jianmo:#c0392b; --jianmo-d:#7b241c; --usagi:#f1c40f; --usagi-d:#9b810d;
+    --classic:#27ae60; --classic-d:#186a3b; --mine:#7f8c8d; --mine-d:#566573;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; padding:16px 16px calc(24px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    background:var(--bg); color:var(--ink); font-family:"微軟正黑體","Noto Sans TC",system-ui,sans-serif;
+  }
+  h1{margin:0; font-size:20px; color:var(--gold); text-align:center; line-height:1.35}
+  h1 small{display:block; font-size:12px; color:var(--muted); font-weight:400; margin-top:2px}
 
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #1a1a1a;
-            font-family: '微軟正黑體', sans-serif;
-            color: white;
-            padding: 20px;
-        }
+  /* ---------- 工具列 ---------- */
+  .bar{width:100%; max-width:760px; background:var(--panel2); border:1px solid var(--line); border-radius:16px; padding:10px;
+       display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .bar input[type=search]{flex:1 1 160px; min-width:0; background:#191919; color:var(--ink); border:1px solid var(--line);
+       border-radius:10px; padding:10px 12px; font:inherit; font-size:15px}
+  .btn{background:#191919; color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+       font:inherit; font-size:14px; font-weight:700; cursor:pointer}
+  .btn:hover{background:#242424}
+  .btn.on{background:var(--gold); color:#231d00; border-color:var(--gold)}
+  .chip{background:#191919; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:6px 12px;
+        font-size:13px; cursor:pointer; white-space:nowrap}
+  .chip.on{color:#fff; border-color:currentColor}
+  .chips{display:flex; gap:6px; flex-wrap:wrap; width:100%; max-width:760px; justify-content:center}
+  .chips .chip[data-cat="賭神"].on{background:var(--gambler-d); color:#d6eaf8}
+  .chips .chip[data-cat="網路迷因"].on{background:var(--meme-d); color:#e8daef}
+  .chips .chip[data-cat="小明劍魔"].on{background:var(--jianmo-d); color:#fadbd8}
+  .chips .chip[data-cat="烏薩奇"].on{background:var(--usagi-d); color:#fef9e7}
+  .chips .chip[data-cat="經典迷因"].on{background:var(--classic-d); color:#d5f5e3}
+  .chips .chip[data-cat="我的音效"].on{background:var(--mine-d); color:#eaecee}
+  .vol{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:13px}
+  .vol input{width:90px}
 
-        h2 { margin-bottom: 20px; color: #f1c40f; text-align: center; }
+  /* ---------- 按鍵盤面 ---------- */
+  .keypad{display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; background:var(--panel);
+           padding:22px; border-radius:24px; box-shadow:0 20px 50px rgba(0,0,0,.9); width:100%; max-width:760px}
+  @media (max-width:900px){ .keypad{grid-template-columns:repeat(3, 1fr); gap:12px; padding:16px} }
+  @media (max-width:600px){ .keypad{grid-template-columns:repeat(2, 1fr); gap:10px; padding:12px} }
 
-        /* 總容器：預設電腦版 4 個一排 */
-        .keypad-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 15px;
-            background-color: #333; 
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-            max-width: 100%; /* 確保在大螢幕上不會破版 */
-        }
+  .key{position:relative; min-height:92px; border:0; border-radius:14px; padding:10px 8px 8px;
+       color:#fff; font:inherit; font-size:15px; font-weight:700; line-height:1.3; cursor:pointer;
+       display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; text-align:center;
+       text-shadow:1px 1px 2px rgba(0,0,0,.45); transition:transform .08s ease, box-shadow .08s ease, filter .15s ease}
+  .key:focus-visible{outline:3px solid #fff; outline-offset:2px}
+  .key:active{transform:translateY(4px)}
+  .key .kb{position:absolute; top:5px; left:6px; font-size:10px; font-weight:700; opacity:.65;
+           background:rgba(0,0,0,.28); border-radius:5px; padding:1px 5px}
+  .key .fav{position:absolute; top:3px; right:4px; font-size:14px; opacity:.5; background:none; border:0; color:inherit; cursor:pointer; padding:2px 4px}
+  .key .fav.on{opacity:1}
+  .key .del{position:absolute; bottom:3px; right:5px; font-size:11px; opacity:.6; background:none; border:0; color:inherit; cursor:pointer}
+  .key[data-cat="賭神"]{background:var(--gambler); box-shadow:0 6px 0 var(--gambler-d)}
+  .key[data-cat="網路迷因"]{background:var(--meme); box-shadow:0 6px 0 var(--meme-d)}
+  .key[data-cat="小明劍魔"]{background:var(--jianmo); box-shadow:0 6px 0 var(--jianmo-d)}
+  .key[data-cat="烏薩奇"]{background:var(--usagi); color:#3d3200; text-shadow:none; box-shadow:0 6px 0 var(--usagi-d)}
+  .key[data-cat="經典迷因"]{background:var(--classic); box-shadow:0 6px 0 var(--classic-d)}
+  .key[data-cat="我的音效"]{background:var(--mine); box-shadow:0 6px 0 var(--mine-d)}
+  .key:active{box-shadow:0 2px 0 rgba(0,0,0,.5)}
+  .key.playing{filter:brightness(1.25); box-shadow:0 0 0 3px var(--gold), 0 6px 0 rgba(0,0,0,.4)}
+  .key.playing::after{content:''; position:absolute; inset:-3px; border-radius:16px; border:3px solid var(--gold);
+                      animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.35}50%{opacity:.9}}
+  .key.loading::before{content:'載入中…'; position:absolute; inset:auto 0 4px; font-size:11px; font-weight:400; opacity:.9}
+  .key.failed{background:#7f1d1d !important; box-shadow:0 6px 0 #450a0a !important}
+  .empty{grid-column:1/-1; text-align:center; color:var(--muted); padding:24px 8px; font-size:14px; line-height:1.7}
 
-        /* =========================================
-           RWD 響應式排版魔法開始
-           ========================================= */
-
-        /* 平板、手機橫屏 (Landscape)：3 個一排 */
-        @media (max-width: 900px) {
-            .keypad-container { 
-                grid-template-columns: repeat(3, 1fr); 
-                padding: 20px; /* 稍微縮小面板內距 */
-            }
-        }
-
-        /* 手機豎屏 (Portrait)：2 個一排 */
-        @media (max-width: 600px) {
-            .keypad-container { 
-                grid-template-columns: repeat(2, 1fr); 
-                padding: 15px;
-                gap: 10px; /* 按鈕間的距離稍微縮小 */
-            }
-            .key {
-                /* 手機版稍微縮小按鈕尺寸，確保放得下 */
-                width: 100%; 
-                min-width: 110px;
-                height: 90px;
-                font-size: 14px;
-            }
-        }
-
-        /* ========================================= */
-
-        .key {
-            width: 130px;
-            height: 100px;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            outline: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            line-height: 1.3;
-            transition: all 0.1s ease;
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
-        }
-
-        .key:active { transform: translateY(5px); }
-
-        /* 字體縮小輔助 class */
-        .text-sm { font-size: 12px; }
-
-        /* 法國賭神系列 (深藍色系) */
-        .gambler { background-color: #2980b9; box-shadow: 0 6px 0 #1a5276; }
-        .gambler:active { box-shadow: 0 2px 0 #1a5276; }
-
-        /* 網路迷因系列 (紫色) */
-        .meme { background-color: #8e44ad; box-shadow: 0 6px 0 #5b2c6f; }
-        .meme:active { box-shadow: 0 2px 0 #5b2c6f; }
-        
-        /* 小明劍魔系列 (爆氣紅) */
-        .jianmo { background-color: #c0392b; box-shadow: 0 6px 0 #7b241c; }
-        .jianmo:active { box-shadow: 0 2px 0 #7b241c; }
-
-        /* 烏薩奇系列 (兔兔黃) */
-        .usagi { background-color: #f1c40f; box-shadow: 0 6px 0 #9b810d; }
-        .usagi:active { box-shadow: 0 2px 0 #9b810d; }
-
-        /* 底部聲明區塊 */
-        .footer-disclaimer {
-            margin-top: 30px;
-            color: #777;
-            font-size: 12px;
-            text-align: center;
-            line-height: 1.6;
-            max-width: 500px;
-        }
-
-    </style>
-
+  /* ---------- 其他 ---------- */
+  .foot{margin-top:6px; color:#777; font-size:12px; text-align:center; line-height:1.7; max-width:640px}
+  .foot a{color:#9ecbff}
+  #toast{position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom)); transform:translateX(-50%);
+         background:#000c; border:1px solid var(--line); color:#fff; padding:10px 16px; border-radius:999px;
+         font-size:14px; opacity:0; pointer-events:none; transition:opacity .2s ease; max-width:calc(100vw - 32px); text-align:center}
+  #toast.show{opacity:1}
+  dialog{border:1px solid var(--line); border-radius:16px; background:var(--panel); color:var(--ink); padding:18px; max-width:min(420px,92vw)}
+  dialog input{width:100%; margin:6px 0 10px; background:#191919; color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:10px; font:inherit}
+  dialog label{font-size:13px; color:var(--muted)}
+  dialog .row{display:flex; gap:8px; justify-content:flex-end; margin-top:12px}
+  @media print{.bar,.chips,.foot,#toast{display:none}}
+</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GHGBM401HN"></script>
 <script>
@@ -129,77 +105,301 @@
 </head>
 <body>
 
-    <h2>Meme Soundboard v3.1<br><span style="font-size:14px; color:#aaa;">(旋轉手機看看！)</span></h2>
+<h1>Meme Soundboard v4.0
+  <small>點一下播放｜<kbd>數字／字母</kbd> 也可以｜<kbd>?</kbd> 看快捷鍵</small>
+</h1>
 
-    <audio id="jianmo-sound" src="https://memeprod.sgp1.digitaloceanspaces.com/user-sound/db5831cbd78e5d181b0cd91272e5c962.mp3" preload="auto"></audio>
+<div class="bar">
+  <input id="q" type="search" placeholder="搜尋音效…" aria-label="搜尋音效">
+  <button class="btn" id="stopBtn" title="停止播放">■ 停止</button>
+  <button class="btn" id="randBtn" title="隨機播一個">🎲 隨機</button>
+  <button class="btn" id="favBtn" title="只顯示最愛的">★ 最愛</button>
+  <button class="btn" id="mixBtn" title="開啟後可以同時播多顆">＋ 疊音</button>
+  <span class="vol"><span id="volIcon">🔊</span><input id="vol" type="range" min="0" max="1" step="0.05" value="1" aria-label="音量"></span>
+  <button class="btn" id="addBtn" title="加上自己的音效（貼網址或選檔案）">＋ 加音效</button>
+</div>
+<div class="chips" id="chips"></div>
+<div class="keypad" id="pad" aria-live="polite"></div>
 
-    <div class="keypad-container">
-        
-        <button class="key gambler" onclick="playSound('c8a897ea134ef5a0ad3667b31b9833ae.mp3')">我要驗牌</button>
-        <button class="key gambler" onclick="playSound('5f337050afec9f21bde5ef0eb8a69359.mp3')">牌沒有問題</button>
-        <button class="key gambler" onclick="playSound('b483cad203a1134326313d31b2d4e2ad.mp3')">給我擦皮鞋</button>
-        <button class="key meme" onclick="playSound('90927ac35a83e150bf2941c16399c362.mp3')">意不意外<br>開不開心</button>
+<div class="foot">
+  聲明：本網頁程式碼與「賭神／網路迷因／小明劍魔／烏薩奇」音效素材來源為
+  <a href="https://memes.tw/sound" target="_blank" rel="noopener">memes.tw</a>，
+  「經典迷因」音效取自 <a href="https://archive.org" target="_blank" rel="noopener">Internet Archive</a>，
+  僅供程式教學、技術交流與個人娛樂使用，請勿用於商業營利用途。<br>
+  自己加的音效只存在你自己的瀏覽器裡（IndexedDB），不會上傳。
+</div>
 
-        <button class="key meme" onclick="playSound('8146c3fb2dd9b5de4301e92c5aa6f557.mp3')">啊對對對</button>
-        <button class="key jianmo" onclick="playSegment('jianmo-sound', 0, 1.2)">回答我</button>
-        <button class="key jianmo" onclick="playSegment('jianmo-sound', 1.2, 2.9)">look my eyes</button>
-        <button class="key jianmo text-sm" onclick="playSegment('jianmo-sound', 2.9, 8.5)">tell me，why？<br>why？baby，why？</button>
-
-        <button class="key usagi" onclick="playSound('f2875285ceac0752359dfa150b6782cf.mp3')">烏薩奇<br>蛤~</button>
-        <button class="key usagi" onclick="playSound('5eba97221972295472e36b6227d73ffe.mp3')">烏薩奇<br>嗚啦</button>
-        <button class="key usagi text-sm" onclick="playSound('8c754b0ef86d86d9d4a2c5b884510670.mp3')">嗚嗚啦啦嗚啦<br>嗚啦嘛呀 嗨呀哈</button>
-        <button class="key usagi" onclick="playSound('bb5e22c2a79fe8c32b2236cb4f22941d.mp3')">嗚啦呀哈<br>呀哈嗚啦</button>
-
-        <button class="key usagi" onclick="playSound('fbe75b82b89fde43a374cc8122a266d8.mp3')">噗嚕壓哈</button>
-        <button class="key usagi" onclick="playSound('b407072470547a3e43cd8204023c6b77.mp3')">伊~呀哈~</button>
-        <button class="key usagi" onclick="playSound('0ba03b325e9af4d9c7664a8e723b93e9.mp3')">噗魯~~~呀哈</button>
-        <button class="key usagi" onclick="playSound('de1145ef6ca40a9935af49c77b91cb32.mp3')">噗魯~~~</button>
-
+<dialog id="addDlg">
+  <form method="dialog">
+    <b>加上自己的音效</b>
+    <label for="cName">名稱</label>
+    <input id="cName" placeholder="例如：我要驗牌" maxlength="30">
+    <label for="cUrl">音效網址（.mp3／.m4a／.ogg，或留空改選檔案）</label>
+    <input id="cUrl" placeholder="https://…" inputmode="url">
+    <label for="cFile">或從這台裝置選檔案（會存進瀏覽器，離線也能播）</label>
+    <input id="cFile" type="file" accept="audio/*">
+    <div class="row">
+      <button class="btn" value="cancel">取消</button>
+      <button class="btn on" id="cSave" value="save">儲存</button>
     </div>
+  </form>
+</dialog>
 
-    <div class="footer-disclaimer">
-        聲明：本網頁程式碼與相關音效素材來源為 memes.tw，僅供程式教學、技術交流與個人娛樂使用，請勿用於任何商業營利用途。
-    </div>
+<div id="toast" role="status" aria-live="polite"></div>
 
-    <script>
-        let currentAudio = null;
-        let stopTimer = null;
+<script>
+/* =========================================================================
+   音效清單：要加音效只要往下加一筆就好
+   { id, cat, name, url, start?, end? }  start/end 是「只播這一段」（秒）
+   ========================================================================= */
+const CDN = 'https://memeprod.sgp1.digitaloceanspaces.com/user-sound/';
+const SOUNDS = [
+  // 法國賭神
+  { id:'g1', cat:'賭神', name:'我要驗牌',        url:CDN+'c8a897ea134ef5a0ad3667b31b9833ae.mp3' },
+  { id:'g2', cat:'賭神', name:'牌沒有問題',      url:CDN+'5f337050afec9f21bde5ef0eb8a69359.mp3' },
+  { id:'g3', cat:'賭神', name:'給我擦皮鞋',      url:CDN+'b483cad203a1134326313d31b2d4e2ad.mp3' },
+  // 網路迷因
+  { id:'m1', cat:'網路迷因', name:'意不意外<br>開不開心', url:CDN+'90927ac35a83e150bf2941c16399c362.mp3' },
+  { id:'m2', cat:'網路迷因', name:'啊對對對',    url:CDN+'8146c3fb2dd9b5de4301e92c5aa6f557.mp3' },
+  // 小明劍魔（同一個檔切三段）
+  { id:'j1', cat:'小明劍魔', name:'回答我',      url:CDN+'db5831cbd78e5d181b0cd91272e5c962.mp3', start:0,   end:1.2 },
+  { id:'j2', cat:'小明劍魔', name:'look my eyes', url:CDN+'db5831cbd78e5d181b0cd91272e5c962.mp3', start:1.2, end:2.9 },
+  { id:'j3', cat:'小明劍魔', name:'tell me，why？<br>why？baby，why？', url:CDN+'db5831cbd78e5d181b0cd91272e5c962.mp3', start:2.9, end:8.5 },
+  // 烏薩奇
+  { id:'u1', cat:'烏薩奇', name:'烏薩奇<br>蛤~',  url:CDN+'f2875285ceac0752359dfa150b6782cf.mp3' },
+  { id:'u2', cat:'烏薩奇', name:'烏薩奇<br>嗚啦', url:CDN+'5eba97221972295472e36b6227d73ffe.mp3' },
+  { id:'u3', cat:'烏薩奇', name:'嗚嗚啦啦嗚啦<br>嗚啦嘛呀 嗨呀哈', url:CDN+'8c754b0ef86d86d9d4a2c5b884510670.mp3' },
+  { id:'u4', cat:'烏薩奇', name:'嗚啦呀哈<br>呀哈嗚啦', url:CDN+'bb5e22c2a79fe8c32b2236cb4f22941d.mp3' },
+  { id:'u5', cat:'烏薩奇', name:'噗嚕壓哈',      url:CDN+'fbe75b82b89fde43a374cc8122a266d8.mp3' },
+  { id:'u6', cat:'烏薩奇', name:'伊~呀哈~',      url:CDN+'b407072470547a3e43cd8204023c6b77.mp3' },
+  { id:'u7', cat:'烏薩奇', name:'噗魯~~~呀哈',   url:CDN+'0ba03b325e9af4d9c7664a8e723b93e9.mp3' },
+  { id:'u8', cat:'烏薩奇', name:'噗魯~~~',       url:CDN+'de1145ef6ca40a9935af49c77b91cb32.mp3' },
+  // 經典迷因（Internet Archive，可直接抓）
+  { id:'c1', cat:'經典迷因', name:'Vine Boom',   url:'https://archive.org/download/vine-boom_202208/Vine%20boom.mp3' },
+  { id:'c2', cat:'經典迷因', name:'Roblox OOF',  url:'https://archive.org/download/rblxoof/uuhhh.mp3' },
+  { id:'c3', cat:'經典迷因', name:'Among Us<br>身分揭露', url:'https://archive.org/download/among-us-role-reveal-sound/among-us-role-reveal-sound.mp3' },
+  { id:'c4', cat:'經典迷因', name:'bruh',        url:'https://archive.org/download/movie_1_202401/movie_1.mp3' },
+  { id:'c5', cat:'經典迷因', name:'放屁聲',      url:'https://archive.org/download/fart-with-reverb/dry-fart.mp3' },
+];
+const CATS = ['全部','賭神','網路迷因','小明劍魔','烏薩奇','經典迷因','我的音效'];
+const KEYORDER = '1234567890qwertyuiopasdfghjklzxcvbnm'.split('');
+const LS = { fav:'msc.fav', vol:'msc.vol', mix:'msc.mix', mine:'msc.mine' };
 
-        function stopAll() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
-            if (stopTimer) {
-                clearTimeout(stopTimer);
-            }
-            const jianmo = document.getElementById('jianmo-sound');
-            if (jianmo) {
-                jianmo.pause();
-            }
-        }
+const $ = (id) => document.getElementById(id);
+const pad = $('pad'), toastEl = $('toast');
+let mine = [];                       // 自己加的音效（檔案存 IndexedDB，這裡只放中介資料）
+let all = [];                        // SOUNDS + mine（含 blob URL）
+let filter = { cat:'全部', q:'', fav:false };
+const players = new Map();           // id -> Audio（重複使用，不要每次點都 new）
+const timers = new Map();            // id -> 分段停止用的 timeupdate handler
+let currentId = null, mix = false, warmed = false, vol = 1;
 
-        function playSound(fileName) {
-            stopAll(); 
-            const baseUrl = 'https://memeprod.sgp1.digitaloceanspaces.com/user-sound/';
-            currentAudio = new Audio(baseUrl + fileName);
-            currentAudio.play();
-        }
+/* ---------------------------- 小工具 ---------------------------- */
+function toast(text, ms = 1800) { toastEl.textContent = text; toastEl.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => toastEl.classList.remove('show'), ms); }
+const stored = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v) } catch (e) { return d } };
+const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) {} };
 
-        function playSegment(audioId, startTime, endTime) {
-            stopAll(); 
-            const audio = document.getElementById(audioId);
-            if (audio) {
-                audio.currentTime = startTime;
-                audio.play();
-                
-                const duration = (endTime - startTime) * 1000;
-                stopTimer = setTimeout(() => {
-                    audio.pause();
-                }, duration);
-            }
-        }
-    </script>
+/* ---------------------------- 音量／疊音 ---------------------------- */
+vol = Math.max(0, Math.min(1, Number(stored(LS.vol, 1))));
+mix = !!stored(LS.mix, false);
+$('vol').value = vol;
+$('mixBtn').classList.toggle('on', mix);
+function applyVol() { players.forEach((a) => { try { a.volume = vol } catch (e) {} }); }
+$('vol').oninput = (e) => { vol = Number(e.target.value); applyVol(); store(LS.vol, vol); $('volIcon').textContent = vol === 0 ? '🔇' : vol < .5 ? '🔉' : '🔊' };
+$('volIcon').textContent = vol === 0 ? '🔇' : vol < .5 ? '🔉' : '🔊';
+$('mixBtn').onclick = () => { mix = !mix; $('mixBtn').classList.toggle('on', mix); store(LS.mix, mix); toast(mix ? '疊音開啟：可以同時播多顆' : '疊音關閉：播新的會停掉上一顆'); };
 
+/* ---------------------------- 播放引擎 ---------------------------- */
+function playerOf(s) {
+  let a = players.get(s.id);
+  if (!a) {
+    a = new Audio();
+    a.preload = 'none';
+    a.crossOrigin = null;
+    a.src = s.url;
+    a.volume = vol;
+    a._meta = { url: s.url };
+    players.set(s.id, a);
+  }
+  return a;
+}
+function keyEl(id) { return pad.querySelector('.key[data-id="' + id + '"]') }
+function stopOne(id) {
+  const a = players.get(id); if (!a) return;
+  try { a.pause() } catch (e) {}
+  const h = timers.get(id); if (h) { a.removeEventListener('timeupdate', h); timers.delete(id) }
+  const el = keyEl(id); if (el) el.classList.remove('playing', 'loading');
+  if (currentId === id) currentId = null;
+}
+function stopAll() { [...players.keys()].forEach(stopOne) }
+$('stopBtn').onclick = () => { stopAll(); toast('已停止'); };
+
+function play(s) {
+  if (!mix) stopAll();
+  const a = playerOf(s);
+  const el = keyEl(s.id);
+  if (el) { el.classList.remove('failed'); el.classList.add('loading') }
+  const started = performance.now();
+  const seek = () => { try { a.currentTime = s.start || 0 } catch (e) {} };
+  if (s.start || s.end) { a.readyState >= 1 ? seek() : a.addEventListener('loadedmetadata', seek, { once:true }) }
+  else { try { a.currentTime = 0 } catch (e) {} }
+
+  const markPlaying = () => {
+    if (el) { el.classList.remove('loading'); el.classList.add('playing') }
+    currentId = s.id;
+    if (performance.now() - started > 400) toast('網路較慢，已載入後播放：' + s.name.replace(/<br>/g, ' '));
+  };
+  a.onplaying = markPlaying;
+  a.onended = () => stopOne(s.id);
+  a.onerror = () => { if (el) { el.classList.remove('loading'); el.classList.add('failed') } toast('這個音效載入失敗：' + s.name.replace(/<br>/g, ' ') + '（再點一次可重試）', 2600); stopOne(s.id) };
+  // 分段：用 timeupdate 判斷（比計時器準，暫停／卡住都不會誤判）
+  if (s.end) {
+    const h = () => { if (a.currentTime >= s.end) { try { a.pause() } catch (e) {} stopOne(s.id) } };
+    const old = timers.get(s.id); if (old) a.removeEventListener('timeupdate', old);
+    timers.set(s.id, h); a.addEventListener('timeupdate', h);
+  }
+  const p = a.play();
+  if (p && p.catch) p.catch((err) => {
+    if (el) el.classList.remove('loading');
+    if (err && err.name === 'NotAllowedError') toast('瀏覽器擋下自動播放：請直接點按鈕或再點一次', 2600);
+    else if (err && err.name !== 'AbortError') toast('播放失敗：' + (err.message || err.name), 2600);
+  });
+}
+// 第一次播放成功後，背景把其他音效抓下來（之後點都是秒播）
+function warmup() {
+  if (warmed) return; warmed = true;
+  all.filter((s) => /^https?:/.test(s.url)).forEach((s, i) => setTimeout(() => {
+    const a = playerOf(s);
+    if (a.preload === 'none') { a.preload = 'auto'; try { a.load() } catch (e) {} }
+  }, 400 + i * 350));
+}
+
+/* ---------------------------- 自己加的音效（IndexedDB） ---------------------------- */
+function idb() {
+  return new Promise((ok, fail) => {
+    const r = indexedDB.open('msc-db', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('files');
+    r.onsuccess = () => ok(r.result); r.onerror = () => fail(r.error);
+  });
+}
+async function idbPut(key, blob) { const db = await idb(); return new Promise((ok, fail) => { const t = db.transaction('files', 'readwrite'); t.objectStore('files').put(blob, key); t.oncomplete = ok; t.onerror = () => fail(t.error) }) }
+async function idbGet(key) { const db = await idb(); return new Promise((ok, fail) => { const t = db.transaction('files', 'readonly'); const q = t.objectStore('files').get(key); q.onsuccess = () => ok(q.result); q.onerror = () => fail(q.error) }) }
+async function idbDel(key) { const db = await idb(); return new Promise((ok) => { const t = db.transaction('files', 'readwrite'); t.objectStore('files').delete(key); t.oncomplete = ok; t.onerror = ok }) }
+
+async function loadMine() {
+  mine = stored(LS.mine, []);
+  const out = [];
+  for (const m of mine) {
+    let url = m.url || '';
+    if (m.blob) { try { const b = await idbGet(m.id); if (b) url = URL.createObjectURL(b) } catch (e) {} }
+    if (url) out.push({ id:m.id, cat:'我的音效', name:m.name, url, mine:true, start:m.start, end:m.end });
+  }
+  return out;
+}
+$('addBtn').onclick = () => { $('cName').value = ''; $('cUrl').value = ''; $('cFile').value = ''; $('addDlg').showModal() };
+$('addDlg').addEventListener('close', async () => {
+  if ($('addDlg').returnValue !== 'save') return;
+  const name = ($('cName').value || '').trim() || '自訂音效';
+  const file = $('cFile').files && $('cFile').files[0];
+  const url = ($('cUrl').value || '').trim();
+  if (!file && !/^https?:\/\//i.test(url)) return toast('請貼 http(s) 開頭的網址，或選一個音效檔', 2600);
+  const id = 'mine-' + Date.now();
+  if (file) { try { await idbPut(id, file) } catch (e) { return toast('存不進瀏覽器（空間不足？）', 2600) } mine.push({ id, name, blob:true }) }
+  else mine.push({ id, name, url });
+  store(LS.mine, mine);
+  all = SOUNDS.concat(await loadMine());
+  render(); toast('已加入：' + name);
+});
+
+/* ---------------------------- 版面 ---------------------------- */
+function visible() {
+  const q = filter.q.trim().toLowerCase();
+  return all.filter((s) => {
+    if (filter.cat !== '全部' && s.cat !== filter.cat) return false;
+    if (filter.fav && !isFav(s.id)) return false;
+    if (q && !(s.name + ' ' + s.cat).toLowerCase().replace(/<br>/g, ' ').includes(q)) return false;
+    return true;
+  });
+}
+const favs = () => stored(LS.fav, []);
+const isFav = (id) => favs().includes(id);
+function toggleFav(id, btn) {
+  const f = favs(); const i = f.indexOf(id);
+  if (i >= 0) { f.splice(i, 1); btn.classList.remove('on'); btn.textContent = '☆' } else { f.push(id); btn.classList.add('on'); btn.textContent = '★' }
+  store(LS.fav, f);
+}
+
+function renderChips() {
+  const counts = {};
+  all.forEach((s) => counts[s.cat] = (counts[s.cat] || 0) + 1);
+  $('chips').innerHTML = CATS.filter((c) => c === '全部' || counts[c]).map((c) =>
+    '<button class="chip' + (filter.cat === c ? ' on' : '') + '" data-cat="' + c + '">' + c + (c === '全部' ? '（' + all.length + '）' : '（' + (counts[c] || 0) + '）') + '</button>').join('');
+}
+
+function render() {
+  renderChips();
+  const list = visible();
+  const kb = list.slice(0, KEYORDER.length);
+  pad.innerHTML = list.length ? list.map((s, i) => {
+    const k = i < KEYORDER.length ? '<span class="kb">' + KEYORDER[i].toUpperCase() + '</span>' : '';
+    const fav = s.mine ? '' : '<button class="fav' + (isFav(s.id) ? ' on' : '') + '" data-fav="' + s.id + '" aria-label="最愛" title="最愛">' + (isFav(s.id) ? '★' : '☆') + '</button>';
+    const del = s.mine ? '<button class="del" data-del="' + s.id + '" aria-label="刪除" title="刪除">✕</button>' : '';
+    return '<button class="key" data-id="' + s.id + '" data-cat="' + s.cat + '" title="' + s.name.replace(/<br>/g, ' ') + '">' + k + fav + del + s.name + '</button>';
+  }).join('') : '<div class="empty">找不到符合的音效<br>換個關鍵字，或按「＋ 加音效」自己加一個</div>';
+  applyVol();
+}
+pad.addEventListener('click', (e) => {
+  const fav = e.target.closest('[data-fav]'); if (fav) { toggleFav(fav.dataset.fav, fav); return }
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    const id = del.dataset.del;
+    mine = mine.filter((m) => m.id !== id); store(LS.mine, mine);
+    idbDel(id); const a = players.get(id); if (a) { try { a.pause() } catch (e) {} players.delete(id) }
+    loadMine().then((m) => { all = SOUNDS.concat(m); render() }); toast('已刪除');
+    return;
+  }
+  const key = e.target.closest('.key'); if (!key) return;
+  const s = all.find((x) => x.id === key.dataset.id); if (!s) return;
+  play(s); warmup();
+});
+
+/* ---------------------------- 搜尋／篩選／隨機 ---------------------------- */
+$('q').oninput = (e) => { filter.q = e.target.value; render() };
+$('chips').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (!c) return; filter.cat = c.dataset.cat; render() });
+$('favBtn').onclick = () => { filter.fav = !filter.fav; $('favBtn').classList.toggle('on', filter.fav); render() };
+$('randBtn').onclick = () => { const l = visible(); if (!l.length) return toast('目前沒有音效可以播'); const s = l[Math.floor(Math.random() * l.length)]; play(s); warmup(); toast('🎲 ' + s.name.replace(/<br>/g, ' ')) };
+
+/* ---------------------------- 鍵盤快捷鍵 ---------------------------- */
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === '?') { toast('快捷鍵：畫面上每顆按鈕左上角的字母／數字。空白鍵＝停止播放。', 4200); return }
+  if (e.key === ' ') { e.preventDefault(); stopAll(); return }
+  const list = visible();
+  const i = KEYORDER.indexOf(e.key.toLowerCase());
+  if (i >= 0 && list[i]) { e.preventDefault(); play(list[i]); warmup() }
+});
+
+/* ---------------------------- 深連結 ?s=id（要在清單載入後才找） ---------------------------- */
+function handleDeepLink() {
+  const id = new URLSearchParams(location.search).get('s');
+  if (!id) return;
+  const s = all.find((x) => x.id === id);
+  if (!s) return;
+  filter.q = ''; filter.cat = '全部'; filter.fav = false; render();
+  const el = keyEl(id);
+  if (el) { el.classList.add('playing'); setTimeout(() => el.classList.remove('playing'), 2500); el.scrollIntoView({ block:'center' }) }
+  toast('已找到「' + s.name.replace(/<br>/g, ' ') + '」，點一下播放', 3200);
+}
+
+/* ---------------------------- Service Worker（離線開頁） ---------------------------- */
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('./sw.js').catch(() => {});
+
+/* ---------------------------- 啟動 ---------------------------- */
+(async function boot() {
+  all = SOUNDS.concat(await loadMine());
+  render();
+  handleDeepLink();
+})();
+</script>
 </body>
 </html>

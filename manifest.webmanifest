@@ -1,0 +1,17 @@
+{
+  "name": "迷因音效控制板",
+  "short_name": "音效板",
+  "description": "賭神、小明劍魔、烏薩奇、經典迷因音效，點一下就播；可搜尋、加最愛、用鍵盤打、自己加音效。",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#141414",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
